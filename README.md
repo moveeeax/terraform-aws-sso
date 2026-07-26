@@ -39,6 +39,7 @@ Inputs are validated at plan time rather than failing mid-apply:
 | `name`                | 1-32 characters from `A-Za-z0-9+=,.@-_`                                      |
 | `description`         | 1-700 characters                                                             |
 | `session_duration`    | ISO-8601 duration of hours and/or minutes, between `PT1H` and `PT12H`        |
+| `relay_state`         | 1-240 characters from the set AWS allows in a RelayState value, if set       |
 | `managed_policy_arns` | each entry must be a full IAM policy ARN                                     |
 | `inline_policy`       | valid JSON containing a `Statement` element                                  |
 
