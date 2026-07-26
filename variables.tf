@@ -49,6 +49,11 @@ variable "relay_state" {
   description = "Relay state URL used to redirect users within the application during sign-in. Null omits it."
   type        = string
   default     = null
+
+  validation {
+    condition     = var.relay_state == null || can(regex("^[a-zA-Z0-9&$@#/%?=~_'\"|!:,.;*+[\\]() {}-]{1,240}$", var.relay_state))
+    error_message = "The relay_state must be 1-240 characters using only the characters AWS allows in a RelayState value (letters, digits, space, and & $ @ # / % ? = ~ - _ ' \" | ! : , . ; * + [ ] ( ) { }). An empty string is rejected by AWS at apply time, so it is rejected here too."
+  }
 }
 
 variable "managed_policy_arns" {
