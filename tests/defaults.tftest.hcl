@@ -89,6 +89,29 @@ run "accepts_minutes_only_duration" {
   }
 }
 
+run "accepts_combined_hours_and_minutes_duration" {
+  command = plan
+
+  variables {
+    session_duration = "PT1H30M"
+  }
+
+  assert {
+    condition     = aws_ssoadmin_permission_set.this.session_duration == "PT1H30M"
+    error_message = "A duration combining hours and minutes must be accepted and passed through unchanged."
+  }
+}
+
+run "rejects_combined_duration_over_twelve_hours" {
+  command = plan
+
+  variables {
+    session_duration = "PT12H1M"
+  }
+
+  expect_failures = [var.session_duration]
+}
+
 run "rejects_non_iso8601_duration" {
   command = plan
 
@@ -167,4 +190,47 @@ run "rejects_inline_policy_without_statement" {
   }
 
   expect_failures = [var.inline_policy]
+}
+
+run "accepts_well_formed_relay_state" {
+  command = plan
+
+  variables {
+    relay_state = "https://example.com/app?tab=home&ref=sso"
+  }
+
+  assert {
+    condition     = aws_ssoadmin_permission_set.this.relay_state == "https://example.com/app?tab=home&ref=sso"
+    error_message = "A well-formed relay_state URL must be passed through unchanged."
+  }
+}
+
+run "rejects_empty_relay_state" {
+  command = plan
+
+  variables {
+    relay_state = ""
+  }
+
+  expect_failures = [var.relay_state]
+}
+
+run "rejects_relay_state_over_240_characters" {
+  command = plan
+
+  variables {
+    relay_state = join("", [for _ in range(241) : "a"])
+  }
+
+  expect_failures = [var.relay_state]
+}
+
+run "rejects_relay_state_with_disallowed_character" {
+  command = plan
+
+  variables {
+    relay_state = "https://example.com/app^redirect"
+  }
+
+  expect_failures = [var.relay_state]
 }
