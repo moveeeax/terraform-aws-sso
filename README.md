@@ -9,7 +9,7 @@ managed and inline policies that define its access.
 
 ```hcl
 module "sso" {
-  source = "github.com/moveeeax/terraform-aws-sso"
+  source = "github.com/moveeeax/terraform-aws-sso?ref=v1.0.0" # pin to a release tag
 
   name             = "readonly"
   session_duration = "PT2H"
